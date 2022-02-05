@@ -3,25 +3,13 @@ import { useForm, Controller } from 'react-hook-form'
 import { Container } from '@material-ui/core'
 import Input from "@material-ui/core/Input"
 
-import { getFirestore, collection, addDoc } from 'firebase/firestore'
-
-import { initializeApp } from "firebase/app";
+import { collection, addDoc } from 'firebase/firestore/lite'
 
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBqTNZSVEHxwYWfjwNIvyJOPf66JUUQ5vw",
-  authDomain: "questionnaire-d9d5d.firebaseapp.com",
-  projectId: "questionnaire-d9d5d",
-  storageBucket: "questionnaire-d9d5d.appspot.com",
-  messagingSenderId: "564314984088",
-  appId: "1:564314984088:web:a4f9a6dced1326d879caed"
-};
 
 
-initializeApp(firebaseConfig)
-
-
+import { db } from "../lib/firebase"
 
 export default function Home() {
   const { watch, register, handleSubmit, formState: { errors }, control } = useForm()
@@ -30,14 +18,21 @@ export default function Home() {
   const watchIs = watch('isLearning')
   const watchWas = watch('wasLearning')
 
+
+  let lang;
   const onSubmit = (date) => {
 
     const name = date.name
     const birth = date.birth
     const isLearning = date.isLearning
     const wasLearning = date.wasLearning
-    const db = getFirestore()
-    const lang = date.lang
+    //const db = getFirestore()
+    if (date.lang) {
+      lang = date.lang
+    } else {
+      lang = ""
+    }
+
 
     const docRef = addDoc(collection(db, "answers"), {
       name: name,
@@ -46,6 +41,8 @@ export default function Home() {
       wasLearning: wasLearning,
       lang: lang
     })
+
+
     console.log("Document written with ID: ", docRef.birth);
 
 
